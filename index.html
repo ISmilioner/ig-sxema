@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>IG Sxema — Instagram uchun heshteg va kontent vositasi</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0D0E14;
+    --surface:#161822;
+    --surface-2:#1E212E;
+    --line:#2A2D3C;
+    --amber:#FFB238;
+    --magenta:#FF4D8D;
+    --text:#F5F3EE;
+    --muted:#8B8D9B;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0; padding:0; background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; overflow-x:hidden;}
+  body{padding-bottom: calc(78px + var(--safe-bottom));}
+  ::-webkit-scrollbar{display:none;}
+  h1,h2,h3{font-family:'Space Grotesk',sans-serif; margin:0;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+
+  /* ---------- Header ---------- */
+  header{
+    padding: calc(18px + var(--safe-top)) 20px 16px;
+    background: radial-gradient(120% 140% at 15% -10%, #23263a 0%, var(--bg) 60%);
+    border-bottom:1px solid var(--line);
+    position:relative;
+    overflow:hidden;
+  }
+  .brand{display:flex; align-items:center; gap:12px;}
+  .aperture{width:40px; height:40px; flex:none;}
+  .aperture svg{width:100%; height:100%;}
+  .blade{transform-origin:20px 20px; animation: openShutter 900ms cubic-bezier(.2,.8,.2,1) both;}
+  .blade:nth-child(1){animation-delay:0ms}
+  .blade:nth-child(2){animation-delay:40ms}
+  .blade:nth-child(3){animation-delay:80ms}
+  .blade:nth-child(4){animation-delay:120ms}
+  .blade:nth-child(5){animation-delay:160ms}
+  .blade:nth-child(6){animation-delay:200ms}
+  @keyframes openShutter{
+    0%{ transform: rotate(0deg) scale(1); opacity:.4; }
+    100%{ transform: rotate(26deg) scale(1); opacity:1; }
+  }
+  .brand-text h1{font-size:19px; font-weight:700; letter-spacing:-0.01em;}
+  .brand-text p{margin:2px 0 0; font-size:12.5px; color:var(--muted);}
+  .stat-row{display:flex; gap:10px; margin-top:16px;}
+  .stat{
+    flex:1; background:var(--surface); border:1px solid var(--line); border-radius:14px;
+    padding:10px 12px;
+  }
+  .stat b{display:block; font-family:'Space Grotesk'; font-size:17px; color:var(--amber);}
+  .stat span{font-size:11px; color:var(--muted);}
+
+  /* ---------- Tabs ---------- */
+  nav.tabs{
+    display:flex; gap:6px; padding:14px 20px 0; position:sticky; top:0; z-index:20;
+    background:var(--bg);
+  }
+  .tab-btn{
+    flex:1; padding:10px 6px; text-align:center; border-radius:12px; border:1px solid var(--line);
+    background:var(--surface); color:var(--muted); font-size:12.5px; font-weight:600; cursor:pointer;
+    transition:.18s ease;
+  }
+  .tab-btn.active{background:linear-gradient(135deg, var(--amber), #ff8a3d); color:#1A1200; border-color:transparent;}
+
+  main{padding:16px 20px 8px;}
+  section.panel{display:none; animation: fadeUp .28s ease both;}
+  section.panel.active{display:block;}
+  @keyframes fadeUp{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);}}
+
+  /* ---------- Niche dial ---------- */
+  .dial-wrap{display:flex; gap:8px; overflow-x:auto; padding:4px 2px 14px; scroll-snap-type:x proximity;}
+  .niche-chip{
+    scroll-snap-align:start; flex:none; display:flex; flex-direction:column; align-items:center; gap:6px;
+    width:66px; cursor:pointer;
+  }
+  .niche-ring{
+    width:52px; height:52px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    border:2px solid var(--line); font-size:20px; background:var(--surface); transition:.2s ease;
+  }
+  .niche-chip.active .niche-ring{border-color:var(--amber); box-shadow:0 0 0 4px rgba(255,178,56,.15); background:var(--surface-2);}
+  .niche-chip span{font-size:10.5px; color:var(--muted); text-align:center; line-height:1.2;}
+  .niche-chip.active span{color:var(--text); font-weight:600;}
+
+  .group-label{display:flex; align-items:center; gap:8px; margin:18px 0 10px;}
+  .group-label b{font-size:13px;}
+  .group-label small{font-size:10.5px; color:var(--muted); background:var(--surface-2); padding:2px 8px; border-radius:20px; border:1px solid var(--line);}
+  .tag-grid{display:flex; flex-wrap:wrap; gap:8px;}
+  .tag{
+    font-size:12.5px; padding:8px 12px; border-radius:9px; background:var(--surface);
+    border:1px solid var(--line); cursor:pointer; user-select:none; transition:.15s ease;
+  }
+  .tag:active{transform:scale(.94); background:var(--surface-2); border-color:var(--amber);}
+  .tag.copied{border-color:var(--magenta); color:var(--magenta);}
+
+  .action-row{display:flex; gap:10px; margin-top:18px;}
+  .btn{
+    flex:1; text-align:center; padding:13px; border-radius:12px; font-weight:700; font-size:13.5px;
+    border:none; cursor:pointer;
+  }
+  .btn-primary{background:linear-gradient(135deg, var(--amber), #ff8a3d); color:#1A1200;}
+  .btn-ghost{background:var(--surface); color:var(--text); border:1px solid var(--line);}
+
+  /* ---------- Scheme cards ---------- */
+  .scheme-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:16px; margin-bottom:12px;
+  }
+  .scheme-top{display:flex; justify-content:space-between; align-items:flex-start; gap:10px;}
+  .scheme-top h3{font-size:15px;}
+  .scheme-tag{font-size:10px; color:var(--bg); background:var(--amber); padding:3px 8px; border-radius:20px; font-weight:700; flex:none;}
+  .scheme-desc{font-size:12.5px; color:var(--muted); margin-top:6px; line-height:1.5;}
+  .scheme-steps{margin:12px 0 0; padding:0; list-style:none; counter-reset:step;}
+  .scheme-steps li{
+    counter-increment:step; font-size:12.5px; padding:8px 0 8px 30px; position:relative;
+    border-top:1px dashed var(--line); line-height:1.4;
+  }
+  .scheme-steps li:first-child{border-top:none;}
+  .scheme-steps li::before{
+    content: counter(step); position:absolute; left:0; top:8px; width:20px; height:20px; border-radius:50%;
+    background:var(--surface-2); border:1px solid var(--line); font-family:'JetBrains Mono'; font-size:10.5px;
+    display:flex; align-items:center; justify-content:center; color:var(--amber);
+  }
+  .caption-box{
+    margin-top:10px; background:var(--surface-2); border:1px dashed var(--line); border-radius:10px;
+    padding:10px 12px; font-size:11.5px; color:var(--muted); font-family:'JetBrains Mono'; line-height:1.5;
+  }
+
+  /* ---------- Time table ---------- */
+  .day-card{
+    display:flex; justify-content:space-between; align-items:center; background:var(--surface);
+    border:1px solid var(--line); border-radius:14px; padding:14px 16px; margin-bottom:8px;
+  }
+  .day-name{font-weight:700; font-size:13.5px; width:80px;}
+  .day-slots{display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end;}
+  .slot{font-family:'JetBrains Mono'; font-size:11.5px; background:var(--surface-2); border:1px solid var(--line); padding:5px 9px; border-radius:8px; color:var(--amber);}
+  .tz-note{font-size:11.5px; color:var(--muted); margin-top:10px; text-align:center;}
+
+  /* ---------- Bottom tab bar ---------- */
+  .bottombar{
+    position:fixed; left:0; right:0; bottom:0; z-index:30;
+    background:rgba(13,14,20,.92); backdrop-filter:blur(10px);
+    border-top:1px solid var(--line); padding: 10px 16px calc(10px + var(--safe-bottom));
+    display:flex; justify-content:space-around;
+  }
+  .bb-item{display:flex; flex-direction:column; align-items:center; gap:3px; color:var(--muted); cursor:pointer; font-size:10.5px;}
+  .bb-item.active{color:var(--amber);}
+  .bb-icon{font-size:18px;}
+
+  .toast{
+    position:fixed; left:50%; bottom:96px; transform:translateX(-50%) translateY(20px); opacity:0;
+    background:var(--surface-2); border:1px solid var(--amber); color:var(--text); padding:10px 16px;
+    border-radius:30px; font-size:12.5px; transition:.25s ease; z-index:50; pointer-events:none;
+  }
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="aperture">
+      <svg viewBox="0 0 40 40" fill="none">
+        <circle cx="20" cy="20" r="19" stroke="#2A2D3C" stroke-width="1.4"/>
+        <g>
+          <path class="blade" d="M20 20 L20 6 L27 9 Z" fill="#FFB238"/>
+          <path class="blade" d="M20 20 L31 12 L33 19 Z" fill="#FF8A3D"/>
+          <path class="blade" d="M20 20 L34 22 L29 29 Z" fill="#FF4D8D"/>
+          <path class="blade" d="M20 20 L26 33 L18 34 Z" fill="#FFB238"/>
+          <path class="blade" d="M20 20 L12 31 L9 25 Z" fill="#FF8A3D"/>
+          <path class="blade" d="M20 20 L7 18 L11 10 Z" fill="#FF4D8D"/>
+        </g>
+      </svg>
+    </div>
+    <div class="brand-text">
+      <h1>IG Sxema</h1>
+      <p>Heshteg va kontent-reja — bir joyda</p>
+    </div>
+  </div>
+  <div class="stat-row">
+    <div class="stat"><b id="statNiches">10</b><span>yo'nalish</span></div>
+    <div class="stat"><b id="statTags">240+</b><span>heshteg</span></div>
+    <div class="stat"><b id="statSchemes">6</b><span>tayyor sxema</span></div>
+  </div>
+</header>
+
+<nav class="tabs">
+  <div class="tab-btn active" data-tab="tags">Heshteglar</div>
+  <div class="tab-btn" data-tab="schemes">Sxemalar</div>
+  <div class="tab-btn" data-tab="time">Vaqt</div>
+</nav>
+
+<main>
+
+  <!-- TAGS PANEL -->
+  <section class="panel active" id="panel-tags">
+    <div class="dial-wrap" id="dialWrap"></div>
+
+    <div id="tagGroups"></div>
+
+    <div class="action-row">
+      <button class="btn btn-primary" id="copyAllBtn">Barchasini nusxalash</button>
+      <button class="btn btn-ghost" id="shuffleBtn">Aralashtirish</button>
+    </div>
+  </section>
+
+  <!-- SCHEMES PANEL -->
+  <section class="panel" id="panel-schemes">
+    <div id="schemeList"></div>
+  </section>
+
+  <!-- TIME PANEL -->
+  <section class="panel" id="panel-time">
+    <div id="timeList"></div>
+    <p class="tz-note">Vaqtlar Toshkent (UTC+5) bo'yicha. Auditoriyangiz statistikasini Instagram Insights orqali tekshirib, moslashtiring.</p>
+  </section>
+
+</main>
+
+<div class="bottombar">
+  <div class="bb-item active" data-tab="tags"><div class="bb-icon">#</div>Heshteg</div>
+  <div class="bb-item" data-tab="schemes"><div class="bb-icon">▦</div>Sxema</div>
+  <div class="bb-item" data-tab="time"><div class="bb-icon">◷</div>Vaqt</div>
+</div>
+
+<div class="toast" id="toast">Nusxalandi</div>
+
+<script>
+/* ---------------- Telegram WebApp integratsiyasi ---------------- */
+const tg = window.Telegram ? window.Telegram.WebApp : null;
+if (tg) {
+  tg.ready();
+  tg.expand();
+  try {
+    document.documentElement.style.setProperty('--bg', tg.themeParams.bg_color ? tg.themeParams.bg_color : '#0D0E14');
+  } catch(e) {}
+}
+function haptic(style){
+  if (tg && tg.HapticFeedback) {
+    try { tg.HapticFeedback.impactOccurred(style || 'light'); } catch(e){}
+  }
+}
+
+/* ---------------- Ma'lumotlar: heshteglar ---------------- */
+const NICHES = {
+  moda: { icon:'👗', label:'Moda', 
+    katta:['#fashion','#style','#ootd','#outfit','#instafashion','#fashionista','#lookoftheday','#trendy'],
+    orta:['#uzfashion','#streetstyle','#moda2026','#kiyimdukoni','#fashionuz','#minimalstyle','#outfitinspo','#stylediary'],
+    kichik:['#modauz','#uzbekfashion','#kiyimshop','#everydaystyle','#capsulewardrobe','#localbrand','#fashionblog_uz','#stylepost'] },
+  fitnes: { icon:'💪', label:'Fitnes',
+    katta:['#fitness','#gym','#workout','#fitnessmotivation','#health','#training','#bodybuilding','#fitlife'],
+    orta:['#fitnessuz','#gymtime','#sportuz','#homeworkout','#fitnessjourney','#healthylifestyle','#crossfit','#fitgirl'],
+    kichik:['#toshkentfitness','#sportzal','#fitnesstoshkent','#mushakmashqi','#fitnesscoachuz','#sportformasi','#gymlife_uz','#fitnessdiary'] },
+  ovqat: { icon:'🍲', label:'Ovqat',
+    katta:['#food','#foodie','#recipe','#foodporn','#instafood','#homemade','#cooking','#yummy'],
+    orta:['#uzbekfood','#retsept','#taomretseptlari','#osh','#milliytaom','#foodblogger','#homecooking','#dinnertime'],
+    kichik:['#uzretsept','#oshxona','#taomtayyorlash','#retseptlaruz','#milliytaomlar','#kulinariya_uz','#foodstyling','#oshpaz'] },
+  gozallik: { icon:'💄', label:"Go'zallik",
+    katta:['#beauty','#makeup','#skincare','#beautytips','#cosmetics','#glowup','#makeuptutorial','#selfcare'],
+    orta:['#goZzallikuz','#skincareuz','#toshkentbeauty','#beautysalon','#lashextensions','#nailsuz','#hairstyle','#makeupartist'],
+    kichik:['#gozallikkabineti','#kosmetologuz','#brovist_uz','#saloncare','#skincareroutine_uz','#makeupuz','#beautyblog_uz','#tirnoqdizayni'] },
+  sayohat: { icon:'✈️', label:'Sayohat',
+    katta:['#travel','#travelgram','#wanderlust','#explore','#travelphotography','#vacation','#trip','#adventure'],
+    orta:['#uzbektravel','#uzbekistan','#samarkand','#bukhara','#travelblog','#backpacking','#roadtrip','#exploreuzbekistan'],
+    kichik:['#sayohatuz','#uzbekistontarixi','#registon','#silkroad_uz','#sayyohlik','#mahalliyturizm','#travelguide_uz','#toshkentsayohat'] },
+  biznes: { icon:'📈', label:'Biznes',
+    katta:['#business','#entrepreneur','#marketing','#startup','#success','#smallbusiness','#digitalmarketing','#businessowner'],
+    orta:['#bizneuz','#tadbirkor','#marketinguz','#onlinebiznes','#biznesgoyalari','#smm','#brendbuild','#savdo'],
+    kichik:['#tadbirkoruz','#kichikbiznes','#bizneskengashlari','#onlinesavdo','#marketingstrategiya','#biznesreja','#startupuz','#raqamlimarketing'] },
+  motivatsiya: { icon:'🔥', label:'Motivatsiya',
+    katta:['#motivation','#mindset','#success','#selfimprovement','#discipline','#quotes','#growth','#inspiration'],
+    orta:['#motivatsiya','#maqsad','#rivojlanish','#natijaliyul','#ozinizrivojlantiring','#tafakkur','#matonat','#gʻalaba'],
+    kichik:['#motivatsiyauz','#maqsadsarikadam','#kundalikodat','#oʻzustidaishlash','#irodakuchi','#tafakkurtarzi','#natijauchunkurash','#intizom'] },
+  ota_ona: { icon:'👶', label:"Ona & Bola",
+    katta:['#momlife','#parenting','#baby','#mom','#family','#motherhood','#kids','#newborn'],
+    orta:['#onalikuz','#chaqaloq','#bolatarbiyasi','#homiladorlik','#farzand','#oilaviy','#yoshoналар','#tarbiya'],
+    kichik:['#onauz','#chaqaloqparvarishi','#bolakiyimlari','#onaliksirlari','#homilauz','#tarbiyamaslahatlari','#bolatibbiyoti','#ozimning_bolam'] },
+  avto: { icon:'🚗', label:'Avto',
+    katta:['#car','#automotive','#carsofinstagram','#cars','#carlifestyle','#supercar','#driving','#auto'],
+    orta:['#avtouz','#mashina','#avtosalon','#tashkentcars','#carreview','#avtomobil','#carphotography','#tuningcar'],
+    kichik:['#uzavto','#mashinasotuv','#avtobozor','#carsuz','#driveuz','#avtoxizmat','#carrepairuz','#mashinaparvarishi'] },
+  texnologiya: { icon:'💻', label:'Texnologiya',
+    katta:['#tech','#technology','#innovation','#ai','#gadgets','#software','#digital','#coding'],
+    orta:['#texnologiyauz','#dasturlash','#itsohasi','#raqamlashtirish','#startuptech','#dasturchi','#webdesign','#smmtool'],
+    kichik:['#uzbektech','#itmutaxassis','#dasturchi_uz','#raqamlitexnologiya','#kiberxavfsizlik','#ittalim','#kodyozish','#texnologiyayangiliklari'] }
+};
+
+const dialWrap = document.getElementById('dialWrap');
+const tagGroups = document.getElementById('tagGroups');
+let activeNiche = 'moda';
+
+function renderDial(){
+  dialWrap.innerHTML = '';
+  Object.keys(NICHES).forEach(key=>{
+    const n = NICHES[key];
+    const chip = document.createElement('div');
+    chip.className = 'niche-chip' + (key===activeNiche ? ' active' : '');
+    chip.innerHTML = `<div class="niche-ring">${n.icon}</div><span>${n.label}</span>`;
+    chip.onclick = ()=>{ activeNiche = key; haptic('light'); renderDial(); renderTags(); };
+    dialWrap.appendChild(chip);
+  });
+}
+
+function tagRow(list, labelText, countLabel){
+  const wrap = document.createElement('div');
+  wrap.innerHTML = `<div class="group-label"><b>${labelText}</b><small>${countLabel}</small></div>`;
+  const grid = document.createElement('div');
+  grid.className = 'tag-grid';
+  list.forEach(t=>{
+    const el = document.createElement('div');
+    el.className = 'tag mono';
+    el.textContent = t;
+    el.onclick = ()=>{
+      navigator.clipboard && navigator.clipboard.writeText(t).catch(()=>{});
+      el.classList.add('copied');
+      setTimeout(()=>el.classList.remove('copied'), 500);
+      haptic('light');
+      showToast(t + ' nusxalandi');
+    };
+    grid.appendChild(el);
+  });
+  wrap.appendChild(grid);
+  return wrap;
+}
+
+function renderTags(){
+  const n = NICHES[activeNiche];
+  tagGroups.innerHTML = '';
+  tagGroups.appendChild(tagRow(n.katta, 'Katta hajm', 'yuqori raqobat'));
+  tagGroups.appendChild(tagRow(n.orta, "O'rta hajm", 'muvozanatli'));
+  tagGroups.appendChild(tagRow(n.kichik, 'Kichik hajm', 'tez ko\'rinish'));
+}
+
+document.getElementById('copyAllBtn').onclick = ()=>{
+  const n = NICHES[activeNiche];
+  const all = [...n.katta, ...n.orta, ...n.kichik].join(' ');
+  navigator.clipboard && navigator.clipboard.writeText(all).catch(()=>{});
+  haptic('medium');
+  showToast('24 ta heshteg nusxalandi');
+};
+document.getElementById('shuffleBtn').onclick = ()=>{
+  const n = NICHES[activeNiche];
+  [n.katta, n.orta, n.kichik].forEach(arr=>{
+    for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
+  });
+  haptic('light');
+  renderTags();
+};
+
+/* ---------------- Ma'lumotlar: kontent sxemalari ---------------- */
+const SCHEMES = [
+  { tag:'REELS', title:"3 soniyalik ilgak (hook)", 
+    desc:"Birinchi 3 soniyada tomoshabinni to'xtatib qoladigan formula. Reels algoritmi ilk soniyalardagi ushlab turish foiziga eng ko'p e'tibor beradi.",
+    steps:["0-3 sek: muammoni yoki qiziqarli natijani ko'rsating (matnsiz, faqat harakat)","3-8 sek: qanday ekanini tushuntiring, tez montaj","8-12 sek: yechim yoki natija, aniq va lo'nda","Oxiri: keyingi qadam — 'Saqlab qo'ying' yoki 'Izohda yozing'"],
+    caption:"Caption formulasi: [Diqqat tortuvchi savol] + [1 gapda foyda] + [CTA: saqlang/ulashing]" },
+  { tag:'KARUSEL', title:"Oldin / Keyin",
+    desc:"Natija ko'rsatishga asoslangan format — mahsulot, xizmat yoki shaxsiy rivojlanishni tasvirlashda ishlaydi.",
+    steps:["1-slayd: 'Oldin' holati, muammo aniq ko'rinsin","2-slayd: Jarayon — nima qilindi","3-slayd: 'Keyin' natija","4-slayd: Qisqa xulosa raqamlar bilan","5-slayd: CTA — 'Siz ham shunday natija xohlaysizmi?'"],
+    caption:"Caption: [Natija raqami] + [qisqa jarayon] + savol bilan yakunlang" },
+  { tag:'ISHONCH', title:"Sahna orqasi (behind the scenes)",
+    desc:"Auditoriya bilan ishonch o'rnatish uchun jarayonni ko'rsatish — 'shaxsiy brend' effektini kuchaytiradi.",
+    steps:["Kunlik jarayonning bir bo'lagini suratga oling","Qiyinchilik yoki xato haqida ochiq gapiring","Undan qanday saboq olganingizni ayting","Auditoriyani shu mavzuda tajribasini so'rang"],
+    caption:"Caption: shaxsiy hikoya ohangida, 'men ham...' bilan boshlang" },
+  { tag:'STORY', title:"Savol-javob va so'rovnoma",
+    desc:"Story engagement (reach) ni oshirish uchun eng samarali interaktiv format.",
+    steps:["Poll: ikkita variant bilan oddiy savol qo'ying","Natijani keyingi story'da e'lon qiling","Savol quti orqali auditoriya so'rovlarini yig'ing","3-5 ta savolga alohida video javob bering"],
+    caption:"CTA: 'Javobingizni bosing, natijani ertaga ko'rsataman'" },
+  { tag:'KEYS', title:"Case study post",
+    desc:"Xizmat yoki mahsulotning real natijasini ko'rsatib, ishonch va sotuvni oshiradi.",
+    steps:["Mijoz/holat qisqacha tanishtiriladi","Boshlang'ich muammo raqamlar bilan","Qo'llangan yechim bosqichma-bosqich","Yakuniy natija — aniq foiz yoki raqam bilan"],
+    caption:"Caption: 'Qanday qilib [X] ni [Y] ga o'zgartirdik' formulasi" },
+  { tag:'RO\'YXAT', title:"Top-5 / Top-3 ro'yxat post",
+    desc:"Foydali, saqlanadigan (save) kontent — algoritm save va ulashishlarni yuqori baholaydi.",
+    steps:["Sarlavha: 'Top-5 [mavzu]'","Har bir band uchun 1 ta karusel slayd","Har bandga 1 qisqa amaliy maslahat qo'shing","Oxirgi slaydda umumlashtiruvchi jamlab beruvchi rasm"],
+    caption:"Caption: 'Qaysi birini sinab ko'rgansiz? Izohda yozing 👇'" }
+];
+
+const schemeList = document.getElementById('schemeList');
+SCHEMES.forEach(s=>{
+  const card = document.createElement('div');
+  card.className = 'scheme-card';
+  card.innerHTML = `
+    <div class="scheme-top">
+      <h3>${s.title}</h3>
+      <div class="scheme-tag">${s.tag}</div>
+    </div>
+    <div class="scheme-desc">${s.desc}</div>
+    <ul class="scheme-steps">${s.steps.map(st=>`<li>${st}</li>`).join('')}</ul>
+    <div class="caption-box">${s.caption}</div>
+  `;
+  schemeList.appendChild(card);
+});
+
+/* ---------------- Ma'lumotlar: postlash vaqti ---------------- */
+const SCHEDULE = [
+  { day:"Dushanba", slots:["12:00–13:00","19:00–20:30"] },
+  { day:"Seshanba", slots:["11:30–13:00","19:30–21:00"] },
+  { day:"Chorshanba", slots:["12:00–13:30","20:00–21:30"] },
+  { day:"Payshanba", slots:["12:00–13:00","19:00–20:30"] },
+  { day:"Juma", slots:["11:00–12:30","18:30–20:00"] },
+  { day:"Shanba", slots:["11:00–13:00","20:00–22:00"] },
+  { day:"Yakshanba", slots:["11:00–13:00","19:00–21:30"] }
+];
+const timeList = document.getElementById('timeList');
+SCHEDULE.forEach(d=>{
+  const el = document.createElement('div');
+  el.className = 'day-card';
+  el.innerHTML = `<div class="day-name">${d.day}</div><div class="day-slots">${d.slots.map(s=>`<div class="slot">${s}</div>`).join('')}</div>`;
+  timeList.appendChild(el);
+});
+
+/* ---------------- Tab boshqaruvi ---------------- */
+function setTab(tab){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.tab===tab));
+  document.querySelectorAll('.bb-item').forEach(b=>b.classList.toggle('active', b.dataset.tab===tab));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active', p.id==='panel-'+tab));
+}
+document.querySelectorAll('.tab-btn, .bb-item').forEach(btn=>{
+  btn.addEventListener('click', ()=>{ haptic('light'); setTab(btn.dataset.tab); });
+});
+
+/* ---------------- Toast ---------------- */
+let toastTimer;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 1400);
+}
+
+/* ---------------- Ishga tushirish ---------------- */
+renderDial();
+renderTags();
+</script>
+</body>
+</html>
