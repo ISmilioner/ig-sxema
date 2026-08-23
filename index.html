@@ -2,443 +2,800 @@
 <html lang="uz">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>IG Sxema — Instagram uchun heshteg va kontent vositasi</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Top sxema | Heshteg</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#0D0E14;
-    --surface:#161822;
-    --surface-2:#1E212E;
-    --line:#2A2D3C;
-    --amber:#FFB238;
-    --magenta:#FF4D8D;
-    --text:#F5F3EE;
-    --muted:#8B8D9B;
-    --safe-top: env(safe-area-inset-top, 0px);
-    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --bg:#0B0B10;
+    --surface:#16161E;
+    --surface-2:#1D1D27;
+    --border:#26262F;
+    --text:#F5F5F7;
+    --muted:#8E8E99;
+    --accent1:#F58529;
+    --accent2:#DD2A7B;
+    --accent3:#8134AF;
+    --accent4:#515BD4;
+    --good:#2ECC71;
+    --gradient: linear-gradient(115deg, var(--accent1), var(--accent2) 45%, var(--accent3) 75%, var(--accent4));
+    --radius: 18px;
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
-  html,body{margin:0; padding:0; background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; overflow-x:hidden;}
-  body{padding-bottom: calc(78px + var(--safe-bottom));}
-  ::-webkit-scrollbar{display:none;}
-  h1,h2,h3{font-family:'Space Grotesk',sans-serif; margin:0;}
-  .mono{font-family:'JetBrains Mono',monospace;}
+  html,body{margin:0;padding:0;height:100%;}
+  body{background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; overscroll-behavior-y:none;}
+  .app{max-width:480px; margin:0 auto; min-height:100vh; display:flex; flex-direction:column; position:relative; padding-bottom:84px;}
 
-  /* ---------- Header ---------- */
-  header{
-    padding: calc(18px + var(--safe-top)) 20px 16px;
-    background: radial-gradient(120% 140% at 15% -10%, #23263a 0%, var(--bg) 60%);
-    border-bottom:1px solid var(--line);
-    position:relative;
-    overflow:hidden;
-  }
-  .brand{display:flex; align-items:center; gap:12px;}
-  .aperture{width:40px; height:40px; flex:none;}
-  .aperture svg{width:100%; height:100%;}
-  .blade{transform-origin:20px 20px; animation: openShutter 900ms cubic-bezier(.2,.8,.2,1) both;}
-  .blade:nth-child(1){animation-delay:0ms}
-  .blade:nth-child(2){animation-delay:40ms}
-  .blade:nth-child(3){animation-delay:80ms}
-  .blade:nth-child(4){animation-delay:120ms}
-  .blade:nth-child(5){animation-delay:160ms}
-  .blade:nth-child(6){animation-delay:200ms}
-  @keyframes openShutter{
-    0%{ transform: rotate(0deg) scale(1); opacity:.4; }
-    100%{ transform: rotate(26deg) scale(1); opacity:1; }
-  }
-  .brand-text h1{font-size:19px; font-weight:700; letter-spacing:-0.01em;}
-  .brand-text p{margin:2px 0 0; font-size:12.5px; color:var(--muted);}
-  .stat-row{display:flex; gap:10px; margin-top:16px;}
-  .stat{
-    flex:1; background:var(--surface); border:1px solid var(--line); border-radius:14px;
-    padding:10px 12px;
-  }
-  .stat b{display:block; font-family:'Space Grotesk'; font-size:17px; color:var(--amber);}
-  .stat span{font-size:11px; color:var(--muted);}
+  header{position:sticky; top:0; z-index:20; background:linear-gradient(180deg, rgba(11,11,16,0.98) 70%, rgba(11,11,16,0)); padding:18px 18px 10px;}
+  .brand{display:flex; align-items:center; gap:10px; margin-bottom:14px;}
+  .brand-ring{width:38px;height:38px;border-radius:50%; background:var(--gradient); display:flex;align-items:center;justify-content:center; flex-shrink:0;}
+  .brand-ring span{width:32px;height:32px;border-radius:50%;background:var(--bg); display:flex;align-items:center;justify-content:center; font-family:'Unbounded';font-size:14px;font-weight:700;}
+  .brand-text h1{font-family:'Unbounded'; font-size:15px; font-weight:700; margin:0; letter-spacing:0.2px;}
+  .brand-text p{margin:2px 0 0; font-size:12px; color:var(--muted);}
+  .search{display:flex; align-items:center; gap:8px; background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:10px 14px;}
+  .search input{background:transparent;border:none;outline:none;color:var(--text); font-family:'Inter';font-size:14px;width:100%;}
+  .search input::placeholder{color:var(--muted);}
 
-  /* ---------- Tabs ---------- */
-  nav.tabs{
-    display:flex; gap:6px; padding:14px 20px 0; position:sticky; top:0; z-index:20;
-    background:var(--bg);
-  }
-  .tab-btn{
-    flex:1; padding:10px 6px; text-align:center; border-radius:12px; border:1px solid var(--line);
-    background:var(--surface); color:var(--muted); font-size:12.5px; font-weight:600; cursor:pointer;
-    transition:.18s ease;
-  }
-  .tab-btn.active{background:linear-gradient(135deg, var(--amber), #ff8a3d); color:#1A1200; border-color:transparent;}
+  main{flex:1; padding:6px 18px 10px;}
+  .view{display:none; animation:fadeIn .25s ease;}
+  .view.active{display:block;}
+  @keyframes fadeIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
 
-  main{padding:16px 20px 8px;}
-  section.panel{display:none; animation: fadeUp .28s ease both;}
-  section.panel.active{display:block;}
-  @keyframes fadeUp{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);}}
+  .section-title{font-family:'Unbounded'; font-size:13px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.6px; margin:18px 0 10px; display:flex; align-items:center; justify-content:space-between;}
+  .section-title:first-child{margin-top:6px;}
+  .section-title .count-badge{background:var(--surface-2); color:var(--text); font-size:10.5px; padding:2px 8px; border-radius:100px; text-transform:none; letter-spacing:0;}
 
-  /* ---------- Niche dial ---------- */
-  .dial-wrap{display:flex; gap:8px; overflow-x:auto; padding:4px 2px 14px; scroll-snap-type:x proximity;}
-  .niche-chip{
-    scroll-snap-align:start; flex:none; display:flex; flex-direction:column; align-items:center; gap:6px;
-    width:66px; cursor:pointer;
-  }
-  .niche-ring{
-    width:52px; height:52px; border-radius:50%; display:flex; align-items:center; justify-content:center;
-    border:2px solid var(--line); font-size:20px; background:var(--surface); transition:.2s ease;
-  }
-  .niche-chip.active .niche-ring{border-color:var(--amber); box-shadow:0 0 0 4px rgba(255,178,56,.15); background:var(--surface-2);}
-  .niche-chip span{font-size:10.5px; color:var(--muted); text-align:center; line-height:1.2;}
-  .niche-chip.active span{color:var(--text); font-weight:600;}
+  .chip-row{display:flex; gap:8px; overflow-x:auto; padding-bottom:4px; margin-bottom:4px; scrollbar-width:none;}
+  .chip-row::-webkit-scrollbar{display:none;}
+  .chip{flex-shrink:0; padding:8px 14px; border-radius:100px; background:var(--surface); border:1px solid var(--border); font-size:13px; font-weight:500; color:var(--muted); cursor:pointer; white-space:nowrap; transition:.15s;}
+  .chip.active{background:var(--gradient); color:#fff; border-color:transparent;}
 
-  .group-label{display:flex; align-items:center; gap:8px; margin:18px 0 10px;}
-  .group-label b{font-size:13px;}
-  .group-label small{font-size:10.5px; color:var(--muted); background:var(--surface-2); padding:2px 8px; border-radius:20px; border:1px solid var(--line);}
-  .tag-grid{display:flex; flex-wrap:wrap; gap:8px;}
-  .tag{
-    font-size:12.5px; padding:8px 12px; border-radius:9px; background:var(--surface);
-    border:1px solid var(--line); cursor:pointer; user-select:none; transition:.15s ease;
-  }
-  .tag:active{transform:scale(.94); background:var(--surface-2); border-color:var(--amber);}
-  .tag.copied{border-color:var(--magenta); color:var(--magenta);}
+  .h-card{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:16px; margin-bottom:12px;}
+  .h-card-top{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px;}
+  .h-card-top h3{font-family:'Unbounded'; font-size:13.5px; font-weight:600; margin:0;}
+  .h-card-top .cat-tag{font-size:11px; color:var(--muted); margin-top:4px;}
+  .icon-btn{width:34px;height:34px;border-radius:10px;background:var(--surface-2); border:1px solid var(--border); display:flex;align-items:center;justify-content:center; cursor:pointer; flex-shrink:0; transition:.15s;}
+  .icon-btn:active{transform:scale(0.92);}
+  .icon-btn.fav.active svg{fill:var(--accent2); stroke:var(--accent2);}
+  .tags-wrap{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px;}
+  .tag{font-size:12px; color:#C9C9D6; background:var(--surface-2); padding:4px 9px; border-radius:8px; border:1px solid var(--border);}
+  .row-btns{display:flex; gap:8px;}
+  .btn{flex:1; padding:10px; border-radius:12px; border:none; cursor:pointer; font-family:'Inter'; font-weight:600; font-size:13px; display:flex; align-items:center; justify-content:center; gap:6px; transition:.15s;}
+  .btn:active{transform:scale(0.97);}
+  .btn-primary{background:var(--gradient); color:#fff;}
+  .btn-ghost{background:var(--surface-2); color:var(--text); border:1px solid var(--border);}
 
-  .action-row{display:flex; gap:10px; margin-top:18px;}
-  .btn{
-    flex:1; text-align:center; padding:13px; border-radius:12px; font-weight:700; font-size:13.5px;
-    border:none; cursor:pointer;
-  }
-  .btn-primary{background:linear-gradient(135deg, var(--amber), #ff8a3d); color:#1A1200;}
-  .btn-ghost{background:var(--surface); color:var(--text); border:1px solid var(--line);}
+  .bg-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  .bg-card{border-radius:var(--radius); overflow:hidden; position:relative; border:1px solid var(--border); background:var(--surface);}
+  .bg-swatch{height:150px; width:100%; position:relative; background-size:cover; background-position:center;}
+  .bg-fav-btn{position:absolute; top:8px; right:8px; width:30px;height:30px;border-radius:9px; background:rgba(11,11,16,0.55); backdrop-filter:blur(4px); display:flex;align-items:center;justify-content:center; cursor:pointer; border:1px solid rgba(255,255,255,0.15);}
+  .bg-fav-btn.active svg{fill:var(--accent2); stroke:var(--accent2);}
+  .bg-del-btn{position:absolute; top:8px; left:8px; width:30px;height:30px;border-radius:9px; background:rgba(11,11,16,0.55); backdrop-filter:blur(4px); display:flex;align-items:center;justify-content:center; cursor:pointer; border:1px solid rgba(255,255,255,0.15);}
+  .mine-badge{position:absolute; bottom:8px; left:8px; background:rgba(11,11,16,0.6); backdrop-filter:blur(4px); font-size:9.5px; font-weight:700; padding:3px 8px; border-radius:100px; letter-spacing:0.3px;}
+  .bg-info{padding:10px 12px 12px;}
+  .bg-info h4{font-family:'Unbounded'; font-size:12px; font-weight:600; margin:0 0 2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .bg-info p{font-size:11px; color:var(--muted); margin:0 0 10px;}
+  .bg-dl{width:100%; padding:8px; border-radius:10px; background:var(--surface-2); color:var(--text); font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px; border:1px solid var(--border);}
+  .bg-dl:active{transform:scale(0.96);}
 
-  /* ---------- Scheme cards ---------- */
-  .scheme-card{
-    background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:16px; margin-bottom:12px;
-  }
-  .scheme-top{display:flex; justify-content:space-between; align-items:flex-start; gap:10px;}
-  .scheme-top h3{font-size:15px;}
-  .scheme-tag{font-size:10px; color:var(--bg); background:var(--amber); padding:3px 8px; border-radius:20px; font-weight:700; flex:none;}
-  .scheme-desc{font-size:12.5px; color:var(--muted); margin-top:6px; line-height:1.5;}
-  .scheme-steps{margin:12px 0 0; padding:0; list-style:none; counter-reset:step;}
-  .scheme-steps li{
-    counter-increment:step; font-size:12.5px; padding:8px 0 8px 30px; position:relative;
-    border-top:1px dashed var(--line); line-height:1.4;
-  }
-  .scheme-steps li:first-child{border-top:none;}
-  .scheme-steps li::before{
-    content: counter(step); position:absolute; left:0; top:8px; width:20px; height:20px; border-radius:50%;
-    background:var(--surface-2); border:1px solid var(--line); font-family:'JetBrains Mono'; font-size:10.5px;
-    display:flex; align-items:center; justify-content:center; color:var(--amber);
-  }
-  .caption-box{
-    margin-top:10px; background:var(--surface-2); border:1px dashed var(--line); border-radius:10px;
-    padding:10px 12px; font-size:11.5px; color:var(--muted); font-family:'JetBrains Mono'; line-height:1.5;
-  }
+  .add-card{border-radius:var(--radius); border:1.5px dashed var(--border); background:var(--surface); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; height:212px; cursor:pointer; color:var(--muted); transition:.15s;}
+  .add-card:active{transform:scale(0.97);}
+  .add-card .plus-ring{width:44px;height:44px;border-radius:50%; background:var(--gradient); display:flex;align-items:center;justify-content:center;}
+  .add-card span{font-size:12px; font-weight:600;}
 
-  /* ---------- Time table ---------- */
-  .day-card{
-    display:flex; justify-content:space-between; align-items:center; background:var(--surface);
-    border:1px solid var(--line); border-radius:14px; padding:14px 16px; margin-bottom:8px;
-  }
-  .day-name{font-weight:700; font-size:13.5px; width:80px;}
-  .day-slots{display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end;}
-  .slot{font-family:'JetBrains Mono'; font-size:11.5px; background:var(--surface-2); border:1px solid var(--line); padding:5px 9px; border-radius:8px; color:var(--amber);}
-  .tz-note{font-size:11.5px; color:var(--muted); margin-top:10px; text-align:center;}
+  /* REFERRAL */
+  .ref-hero{border-radius:20px; padding:2px; background:var(--gradient); margin-bottom:18px;}
+  .ref-hero-inner{background:var(--bg); border-radius:18px; padding:20px 18px;}
+  .ref-badge{display:inline-flex; align-items:center; gap:6px; font-family:'Unbounded'; font-size:11px; color:var(--accent1); letter-spacing:0.6px; text-transform:uppercase; margin-bottom:10px;}
+  .ref-percent{font-family:'Unbounded'; font-size:34px; font-weight:800; line-height:1; margin-bottom:4px; background:var(--gradient); -webkit-background-clip:text; background-clip:text; color:transparent;}
+  .ref-percent-label{font-size:12.5px; color:var(--muted); margin-bottom:16px;}
+  .link-box{display:flex; align-items:center; gap:8px; background:var(--surface-2); border:1px solid var(--border); border-radius:13px; padding:11px 12px; margin-bottom:12px;}
+  .link-box span{flex:1; font-size:12.5px; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-family:monospace;}
+  .link-copy-btn{width:32px; height:32px; border-radius:9px; background:var(--surface); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;}
+  .link-copy-btn:active{transform:scale(0.92);}
 
-  /* ---------- Bottom tab bar ---------- */
-  .bottombar{
-    position:fixed; left:0; right:0; bottom:0; z-index:30;
-    background:rgba(13,14,20,.92); backdrop-filter:blur(10px);
-    border-top:1px solid var(--line); padding: 10px 16px calc(10px + var(--safe-bottom));
-    display:flex; justify-content:space-around;
-  }
-  .bb-item{display:flex; flex-direction:column; align-items:center; gap:3px; color:var(--muted); cursor:pointer; font-size:10.5px;}
-  .bb-item.active{color:var(--amber);}
-  .bb-icon{font-size:18px;}
+  .ref-stats{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px;}
+  .ref-stat-card{background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:14px;}
+  .ref-stat-card .num{font-family:'Unbounded'; font-size:20px; font-weight:700;}
+  .ref-stat-card .lbl{font-size:11px; color:var(--muted); margin-top:2px;}
 
-  .toast{
-    position:fixed; left:50%; bottom:96px; transform:translateX(-50%) translateY(20px); opacity:0;
-    background:var(--surface-2); border:1px solid var(--amber); color:var(--text); padding:10px 16px;
-    border-radius:30px; font-size:12.5px; transition:.25s ease; z-index:50; pointer-events:none;
-  }
+  .step-row{display:flex; gap:12px; align-items:flex-start; background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:13px 14px; margin-bottom:10px;}
+  .step-num{width:26px; height:26px; border-radius:8px; background:var(--surface-2); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-family:'Unbounded'; font-size:12px; font-weight:700; color:var(--accent2);}
+  .step-text h4{font-size:12.5px; margin:0 0 3px; font-weight:600;}
+  .step-text p{font-size:11.5px; color:var(--muted); margin:0; line-height:1.5;}
+
+  .share-log-item{display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--border);}
+  .share-log-item:last-child{border-bottom:none;}
+  .share-log-icon{width:30px;height:30px;border-radius:9px; background:var(--surface-2); display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+  .share-log-item p{font-size:12px; margin:0; color:var(--text);}
+  .share-log-item span{font-size:10.5px; color:var(--muted);}
+
+  .empty-state{text-align:center; padding:60px 20px; color:var(--muted);}
+  .empty-state svg{opacity:0.35; margin-bottom:14px;}
+  .empty-state p{font-size:13px; line-height:1.6; margin:0;}
+  .fav-group-title{font-size:11.5px; color:var(--accent2); font-weight:700; margin:14px 0 8px; text-transform:uppercase; letter-spacing:0.5px;}
+
+  .top-row{display:flex; align-items:center; gap:12px; background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:12px 14px; margin-bottom:10px;}
+  .rank{width:32px; height:32px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-family:'Unbounded'; font-weight:700; font-size:13px; flex-shrink:0; background:var(--surface-2); color:var(--muted);}
+  .rank.gold{background:linear-gradient(135deg,#FFD76A,#FF9F45); color:#2b1a00;}
+  .rank.silver{background:linear-gradient(135deg,#E4E6EB,#B8BCC6); color:#22242b;}
+  .rank.bronze{background:linear-gradient(135deg,#E3A26B,#B96A3A); color:#2b1608;}
+  .top-swatch{width:44px;height:44px;border-radius:11px; flex-shrink:0; background-size:cover; background-position:center;}
+  .top-mid{flex:1; min-width:0;}
+  .top-mid h4{font-size:13px; margin:0 0 3px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .top-mid p{font-size:11px; color:var(--muted); margin:0;}
+  .top-count{font-size:12px; font-weight:700; color:var(--good); flex-shrink:0; text-align:right;}
+  .top-count small{display:block; font-weight:500; color:var(--muted); font-size:9.5px;}
+  .top-sub-title{display:flex; align-items:center; gap:8px; font-family:'Unbounded'; font-size:12.5px; font-weight:600; margin:20px 0 10px;}
+  .top-sub-title:first-child{margin-top:4px;}
+  .top-sub-title svg{flex-shrink:0;}
+
+  nav.tabbar{position:fixed; bottom:0; left:0; right:0; z-index:30; display:flex; justify-content:center; background:rgba(13,13,18,0.9); backdrop-filter:blur(14px); border-top:1px solid var(--border); padding-bottom:env(safe-area-inset-bottom);}
+  .tabbar-inner{max-width:480px; width:100%; display:flex;}
+  .tab-btn{flex:1; border:none; background:transparent; padding:10px 4px 8px; display:flex; flex-direction:column; align-items:center; gap:4px; color:var(--muted); cursor:pointer; position:relative;}
+  .tab-btn svg{stroke:var(--muted); transition:.15s;}
+  .tab-btn span{font-size:10px; font-weight:600;}
+  .tab-btn.active svg{stroke:url(#navgrad);}
+  .tab-btn.active span{background:var(--gradient); -webkit-background-clip:text; background-clip:text; color:transparent;}
+  .tab-btn .dot{position:absolute; top:2px; width:5px;height:5px;border-radius:50%;background:var(--accent2); opacity:0; transition:.15s;}
+  .tab-btn.active .dot{opacity:1;}
+
+  .toast{position:fixed; left:50%; bottom:96px; transform:translateX(-50%) translateY(20px); background:var(--surface-2); border:1px solid var(--border); color:var(--text); padding:10px 18px; border-radius:100px; font-size:13px; font-weight:600; opacity:0; pointer-events:none; transition:.25s; z-index:60; white-space:nowrap; display:flex; align-items:center; gap:8px;}
   .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+  .toast svg{stroke:var(--good); flex-shrink:0;}
+
+  /* MODAL */
+  .modal-overlay{position:fixed; inset:0; background:rgba(5,5,8,0.7); backdrop-filter:blur(3px); z-index:70; display:none; align-items:flex-end; justify-content:center;}
+  .modal-overlay.show{display:flex;}
+  .modal-sheet{width:100%; max-width:480px; background:var(--surface); border-radius:22px 22px 0 0; padding:20px 18px calc(20px + env(safe-area-inset-bottom)); animation:slideUp .25s ease;}
+  @keyframes slideUp{from{transform:translateY(30px); opacity:0;} to{transform:translateY(0); opacity:1;}}
+  .modal-handle{width:36px; height:4px; background:var(--border); border-radius:100px; margin:0 auto 16px;}
+  .modal-title{font-family:'Unbounded'; font-size:14px; font-weight:700; margin:0 0 16px;}
+  .field{margin-bottom:14px;}
+  .field label{font-size:11.5px; color:var(--muted); font-weight:600; display:block; margin-bottom:6px;}
+  .field input[type=text], .field select{width:100%; background:var(--surface-2); border:1px solid var(--border); border-radius:12px; padding:11px 13px; color:var(--text); font-family:'Inter'; font-size:13.5px; outline:none;}
+  .upload-zone{border:1.5px dashed var(--border); border-radius:14px; padding:18px; text-align:center; cursor:pointer; position:relative; overflow:hidden; min-height:120px; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:8px; color:var(--muted); font-size:12.5px;}
+  .upload-zone img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;}
+  .upload-zone input{position:absolute; inset:0; opacity:0; cursor:pointer;}
+  .modal-actions{display:flex; gap:10px; margin-top:6px;}
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute">
+  <linearGradient id="navgrad" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#F58529"/><stop offset="45%" stop-color="#DD2A7B"/><stop offset="100%" stop-color="#515BD4"/>
+  </linearGradient>
+</svg>
 
-<header>
-  <div class="brand">
-    <div class="aperture">
-      <svg viewBox="0 0 40 40" fill="none">
-        <circle cx="20" cy="20" r="19" stroke="#2A2D3C" stroke-width="1.4"/>
-        <g>
-          <path class="blade" d="M20 20 L20 6 L27 9 Z" fill="#FFB238"/>
-          <path class="blade" d="M20 20 L31 12 L33 19 Z" fill="#FF8A3D"/>
-          <path class="blade" d="M20 20 L34 22 L29 29 Z" fill="#FF4D8D"/>
-          <path class="blade" d="M20 20 L26 33 L18 34 Z" fill="#FFB238"/>
-          <path class="blade" d="M20 20 L12 31 L9 25 Z" fill="#FF8A3D"/>
-          <path class="blade" d="M20 20 L7 18 L11 10 Z" fill="#FF4D8D"/>
-        </g>
-      </svg>
+<div class="app">
+  <header>
+    <div class="brand">
+      <div class="brand-ring"><span>TS</span></div>
+      <div class="brand-text">
+        <h1>Top sxema | Heshteg</h1>
+        <p id="headerSub">Fonlar va heshteglar to'plami</p>
+      </div>
     </div>
-    <div class="brand-text">
-      <h1>IG Sxema</h1>
-      <p>Heshteg va kontent-reja — bir joyda</p>
+    <div class="search" id="searchWrap">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8E8E99" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <input id="searchInput" type="text" placeholder="Qidirish...">
+    </div>
+  </header>
+
+  <main>
+    <section class="view active" id="view-hashtags">
+      <div class="chip-row" id="hashCatRow"></div>
+      <div id="hashList"></div>
+    </section>
+
+    <section class="view" id="view-backgrounds">
+      <div class="chip-row" id="bgCatRow"></div>
+      <div class="bg-grid" id="bgList"></div>
+    </section>
+
+    <section class="view" id="view-referral">
+      <div class="ref-hero">
+        <div class="ref-hero-inner">
+          <div class="ref-badge">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#F58529" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"></polyline><rect x="2" y="7" width="20" height="5"></rect><line x1="12" y1="22" x2="12" y2="7"></line><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path></svg>
+            Partnyorlik dasturi
+          </div>
+          <div class="ref-percent">5%</div>
+          <div class="ref-percent-label">Do'stingiz botdan foydalanganda, uning xarajatidan sizga qaytariladi</div>
+          <div class="link-box">
+            <span id="refLinkText">havola yuklanmoqda...</span>
+            <div class="link-copy-btn" onclick="copyRefLink()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F5F5F7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            </div>
+          </div>
+          <div class="row-btns">
+            <button class="btn btn-primary" onclick="shareRefLink()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+              Ulashish
+            </button>
+            <button class="btn btn-ghost" onclick="copyRefLink()">Havolani nusxalash</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="ref-stats">
+        <div class="ref-stat-card">
+          <div class="num" id="refShareCount">0</div>
+          <div class="lbl">Ulashishlaringiz</div>
+        </div>
+        <div class="ref-stat-card">
+          <div class="num">5%</div>
+          <div class="lbl">Har bir do'stdan komissiya</div>
+        </div>
+      </div>
+
+      <div class="section-title">Qanday ishlaydi</div>
+      <div class="step-row">
+        <div class="step-num">1</div>
+        <div class="step-text"><h4>Havolangizni ulashing</h4><p>Yuqoridagi shaxsiy havolani do'stlaringizga yuboring yoki story'ga qo'ying.</p></div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">2</div>
+        <div class="step-text"><h4>Do'stingiz botni ochadi</h4><p>Havola orqali kirgan har bir kishi sizga bog'lab qo'yiladi.</p></div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">3</div>
+        <div class="step-text"><h4>Komissiyangizni oling</h4><p>Do'stingiz botdan foydalanganda, uning xarajatidan 5% sizga yoziladi.</p></div>
+      </div>
+
+      <div class="section-title">So'nggi faoliyat</div>
+      <div id="refLog"></div>
+    </section>
+
+    <section class="view" id="view-favorites">
+      <div id="favContent"></div>
+    </section>
+
+    <section class="view" id="view-top">
+      <div id="topList"></div>
+    </section>
+  </main>
+
+  <nav class="tabbar">
+    <div class="tabbar-inner">
+      <button class="tab-btn active" data-tab="hashtags">
+        <span class="dot"></span>
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><line x1="4" y1="9" x2="20" y2="9"></line><line x1="4" y1="15" x2="20" y2="15"></line><line x1="10" y1="3" x2="8" y2="21"></line><line x1="16" y1="3" x2="14" y2="21"></line></svg>
+        <span>Heshteg</span>
+      </button>
+      <button class="tab-btn" data-tab="backgrounds">
+        <span class="dot"></span>
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+        <span>Fonlar</span>
+      </button>
+      <button class="tab-btn" data-tab="referral">
+        <span class="dot"></span>
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"></polyline><rect x="2" y="7" width="20" height="5"></rect><line x1="12" y1="22" x2="12" y2="7"></line><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path></svg>
+        <span>Referal</span>
+      </button>
+      <button class="tab-btn" data-tab="favorites">
+        <span class="dot"></span>
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+        <span>Sevimli</span>
+      </button>
+      <button class="tab-btn" data-tab="top">
+        <span class="dot"></span>
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
+        <span>Top</span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="toast" id="toast">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+    <span id="toastText">Nusxalandi</span>
+  </div>
+
+  <!-- UPLOAD MODAL -->
+  <div class="modal-overlay" id="uploadModal">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-title">O'z rasmingizni qo'shish</div>
+      <div class="field">
+        <label>Rasm</label>
+        <div class="upload-zone" id="uploadZone">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#8E8E99" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+          <span id="uploadZoneText">Rasm tanlash uchun bosing</span>
+          <input type="file" accept="image/*" id="fileInput">
+        </div>
+      </div>
+      <div class="field">
+        <label>Nomi</label>
+        <input type="text" id="imgTitleInput" placeholder="Masalan: Mening fonim">
+      </div>
+      <div class="field">
+        <label>Kategoriya</label>
+        <select id="imgCatSelect"></select>
+      </div>
+      <div class="field" id="newCatField" style="display:none;">
+        <label>Yangi kategoriya nomi</label>
+        <input type="text" id="newCatInput" placeholder="Kategoriya nomini kiriting">
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="cancelUpload">Bekor qilish</button>
+        <button class="btn btn-primary" id="confirmUpload">Qo'shish</button>
+      </div>
     </div>
   </div>
-  <div class="stat-row">
-    <div class="stat"><b id="statNiches">10</b><span>yo'nalish</span></div>
-    <div class="stat"><b id="statTags">240+</b><span>heshteg</span></div>
-    <div class="stat"><b id="statSchemes">6</b><span>tayyor sxema</span></div>
-  </div>
-</header>
-
-<nav class="tabs">
-  <div class="tab-btn active" data-tab="tags">Heshteglar</div>
-  <div class="tab-btn" data-tab="schemes">Sxemalar</div>
-  <div class="tab-btn" data-tab="time">Vaqt</div>
-</nav>
-
-<main>
-
-  <!-- TAGS PANEL -->
-  <section class="panel active" id="panel-tags">
-    <div class="dial-wrap" id="dialWrap"></div>
-
-    <div id="tagGroups"></div>
-
-    <div class="action-row">
-      <button class="btn btn-primary" id="copyAllBtn">Barchasini nusxalash</button>
-      <button class="btn btn-ghost" id="shuffleBtn">Aralashtirish</button>
-    </div>
-  </section>
-
-  <!-- SCHEMES PANEL -->
-  <section class="panel" id="panel-schemes">
-    <div id="schemeList"></div>
-  </section>
-
-  <!-- TIME PANEL -->
-  <section class="panel" id="panel-time">
-    <div id="timeList"></div>
-    <p class="tz-note">Vaqtlar Toshkent (UTC+5) bo'yicha. Auditoriyangiz statistikasini Instagram Insights orqali tekshirib, moslashtiring.</p>
-  </section>
-
-</main>
-
-<div class="bottombar">
-  <div class="bb-item active" data-tab="tags"><div class="bb-icon">#</div>Heshteg</div>
-  <div class="bb-item" data-tab="schemes"><div class="bb-icon">▦</div>Sxema</div>
-  <div class="bb-item" data-tab="time"><div class="bb-icon">◷</div>Vaqt</div>
 </div>
 
-<div class="toast" id="toast">Nusxalandi</div>
-
 <script>
-/* ---------------- Telegram WebApp integratsiyasi ---------------- */
-const tg = window.Telegram ? window.Telegram.WebApp : null;
-if (tg) {
-  tg.ready();
-  tg.expand();
-  try {
-    document.documentElement.style.setProperty('--bg', tg.themeParams.bg_color ? tg.themeParams.bg_color : '#0D0E14');
-  } catch(e) {}
-}
-function haptic(style){
-  if (tg && tg.HapticFeedback) {
-    try { tg.HapticFeedback.impactOccurred(style || 'light'); } catch(e){}
-  }
-}
-
-/* ---------------- Ma'lumotlar: heshteglar ---------------- */
-const NICHES = {
-  moda: { icon:'👗', label:'Moda', 
-    katta:['#fashion','#style','#ootd','#outfit','#instafashion','#fashionista','#lookoftheday','#trendy'],
-    orta:['#uzfashion','#streetstyle','#moda2026','#kiyimdukoni','#fashionuz','#minimalstyle','#outfitinspo','#stylediary'],
-    kichik:['#modauz','#uzbekfashion','#kiyimshop','#everydaystyle','#capsulewardrobe','#localbrand','#fashionblog_uz','#stylepost'] },
-  fitnes: { icon:'💪', label:'Fitnes',
-    katta:['#fitness','#gym','#workout','#fitnessmotivation','#health','#training','#bodybuilding','#fitlife'],
-    orta:['#fitnessuz','#gymtime','#sportuz','#homeworkout','#fitnessjourney','#healthylifestyle','#crossfit','#fitgirl'],
-    kichik:['#toshkentfitness','#sportzal','#fitnesstoshkent','#mushakmashqi','#fitnesscoachuz','#sportformasi','#gymlife_uz','#fitnessdiary'] },
-  ovqat: { icon:'🍲', label:'Ovqat',
-    katta:['#food','#foodie','#recipe','#foodporn','#instafood','#homemade','#cooking','#yummy'],
-    orta:['#uzbekfood','#retsept','#taomretseptlari','#osh','#milliytaom','#foodblogger','#homecooking','#dinnertime'],
-    kichik:['#uzretsept','#oshxona','#taomtayyorlash','#retseptlaruz','#milliytaomlar','#kulinariya_uz','#foodstyling','#oshpaz'] },
-  gozallik: { icon:'💄', label:"Go'zallik",
-    katta:['#beauty','#makeup','#skincare','#beautytips','#cosmetics','#glowup','#makeuptutorial','#selfcare'],
-    orta:['#goZzallikuz','#skincareuz','#toshkentbeauty','#beautysalon','#lashextensions','#nailsuz','#hairstyle','#makeupartist'],
-    kichik:['#gozallikkabineti','#kosmetologuz','#brovist_uz','#saloncare','#skincareroutine_uz','#makeupuz','#beautyblog_uz','#tirnoqdizayni'] },
-  sayohat: { icon:'✈️', label:'Sayohat',
-    katta:['#travel','#travelgram','#wanderlust','#explore','#travelphotography','#vacation','#trip','#adventure'],
-    orta:['#uzbektravel','#uzbekistan','#samarkand','#bukhara','#travelblog','#backpacking','#roadtrip','#exploreuzbekistan'],
-    kichik:['#sayohatuz','#uzbekistontarixi','#registon','#silkroad_uz','#sayyohlik','#mahalliyturizm','#travelguide_uz','#toshkentsayohat'] },
-  biznes: { icon:'📈', label:'Biznes',
-    katta:['#business','#entrepreneur','#marketing','#startup','#success','#smallbusiness','#digitalmarketing','#businessowner'],
-    orta:['#bizneuz','#tadbirkor','#marketinguz','#onlinebiznes','#biznesgoyalari','#smm','#brendbuild','#savdo'],
-    kichik:['#tadbirkoruz','#kichikbiznes','#bizneskengashlari','#onlinesavdo','#marketingstrategiya','#biznesreja','#startupuz','#raqamlimarketing'] },
-  motivatsiya: { icon:'🔥', label:'Motivatsiya',
-    katta:['#motivation','#mindset','#success','#selfimprovement','#discipline','#quotes','#growth','#inspiration'],
-    orta:['#motivatsiya','#maqsad','#rivojlanish','#natijaliyul','#ozinizrivojlantiring','#tafakkur','#matonat','#gʻalaba'],
-    kichik:['#motivatsiyauz','#maqsadsarikadam','#kundalikodat','#oʻzustidaishlash','#irodakuchi','#tafakkurtarzi','#natijauchunkurash','#intizom'] },
-  ota_ona: { icon:'👶', label:"Ona & Bola",
-    katta:['#momlife','#parenting','#baby','#mom','#family','#motherhood','#kids','#newborn'],
-    orta:['#onalikuz','#chaqaloq','#bolatarbiyasi','#homiladorlik','#farzand','#oilaviy','#yoshoналар','#tarbiya'],
-    kichik:['#onauz','#chaqaloqparvarishi','#bolakiyimlari','#onaliksirlari','#homilauz','#tarbiyamaslahatlari','#bolatibbiyoti','#ozimning_bolam'] },
-  avto: { icon:'🚗', label:'Avto',
-    katta:['#car','#automotive','#carsofinstagram','#cars','#carlifestyle','#supercar','#driving','#auto'],
-    orta:['#avtouz','#mashina','#avtosalon','#tashkentcars','#carreview','#avtomobil','#carphotography','#tuningcar'],
-    kichik:['#uzavto','#mashinasotuv','#avtobozor','#carsuz','#driveuz','#avtoxizmat','#carrepairuz','#mashinaparvarishi'] },
-  texnologiya: { icon:'💻', label:'Texnologiya',
-    katta:['#tech','#technology','#innovation','#ai','#gadgets','#software','#digital','#coding'],
-    orta:['#texnologiyauz','#dasturlash','#itsohasi','#raqamlashtirish','#startuptech','#dasturchi','#webdesign','#smmtool'],
-    kichik:['#uzbektech','#itmutaxassis','#dasturchi_uz','#raqamlitexnologiya','#kiberxavfsizlik','#ittalim','#kodyozish','#texnologiyayangiliklari'] }
-};
-
-const dialWrap = document.getElementById('dialWrap');
-const tagGroups = document.getElementById('tagGroups');
-let activeNiche = 'moda';
-
-function renderDial(){
-  dialWrap.innerHTML = '';
-  Object.keys(NICHES).forEach(key=>{
-    const n = NICHES[key];
-    const chip = document.createElement('div');
-    chip.className = 'niche-chip' + (key===activeNiche ? ' active' : '');
-    chip.innerHTML = `<div class="niche-ring">${n.icon}</div><span>${n.label}</span>`;
-    chip.onclick = ()=>{ activeNiche = key; haptic('light'); renderDial(); renderTags(); };
-    dialWrap.appendChild(chip);
-  });
-}
-
-function tagRow(list, labelText, countLabel){
-  const wrap = document.createElement('div');
-  wrap.innerHTML = `<div class="group-label"><b>${labelText}</b><small>${countLabel}</small></div>`;
-  const grid = document.createElement('div');
-  grid.className = 'tag-grid';
-  list.forEach(t=>{
-    const el = document.createElement('div');
-    el.className = 'tag mono';
-    el.textContent = t;
-    el.onclick = ()=>{
-      navigator.clipboard && navigator.clipboard.writeText(t).catch(()=>{});
-      el.classList.add('copied');
-      setTimeout(()=>el.classList.remove('copied'), 500);
-      haptic('light');
-      showToast(t + ' nusxalandi');
-    };
-    grid.appendChild(el);
-  });
-  wrap.appendChild(grid);
-  return wrap;
-}
-
-function renderTags(){
-  const n = NICHES[activeNiche];
-  tagGroups.innerHTML = '';
-  tagGroups.appendChild(tagRow(n.katta, 'Katta hajm', 'yuqori raqobat'));
-  tagGroups.appendChild(tagRow(n.orta, "O'rta hajm", 'muvozanatli'));
-  tagGroups.appendChild(tagRow(n.kichik, 'Kichik hajm', 'tez ko\'rinish'));
-}
-
-document.getElementById('copyAllBtn').onclick = ()=>{
-  const n = NICHES[activeNiche];
-  const all = [...n.katta, ...n.orta, ...n.kichik].join(' ');
-  navigator.clipboard && navigator.clipboard.writeText(all).catch(()=>{});
-  haptic('medium');
-  showToast('24 ta heshteg nusxalandi');
-};
-document.getElementById('shuffleBtn').onclick = ()=>{
-  const n = NICHES[activeNiche];
-  [n.katta, n.orta, n.kichik].forEach(arr=>{
-    for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
-  });
-  haptic('light');
-  renderTags();
-};
-
-/* ---------------- Ma'lumotlar: kontent sxemalari ---------------- */
-const SCHEMES = [
-  { tag:'REELS', title:"3 soniyalik ilgak (hook)", 
-    desc:"Birinchi 3 soniyada tomoshabinni to'xtatib qoladigan formula. Reels algoritmi ilk soniyalardagi ushlab turish foiziga eng ko'p e'tibor beradi.",
-    steps:["0-3 sek: muammoni yoki qiziqarli natijani ko'rsating (matnsiz, faqat harakat)","3-8 sek: qanday ekanini tushuntiring, tez montaj","8-12 sek: yechim yoki natija, aniq va lo'nda","Oxiri: keyingi qadam — 'Saqlab qo'ying' yoki 'Izohda yozing'"],
-    caption:"Caption formulasi: [Diqqat tortuvchi savol] + [1 gapda foyda] + [CTA: saqlang/ulashing]" },
-  { tag:'KARUSEL', title:"Oldin / Keyin",
-    desc:"Natija ko'rsatishga asoslangan format — mahsulot, xizmat yoki shaxsiy rivojlanishni tasvirlashda ishlaydi.",
-    steps:["1-slayd: 'Oldin' holati, muammo aniq ko'rinsin","2-slayd: Jarayon — nima qilindi","3-slayd: 'Keyin' natija","4-slayd: Qisqa xulosa raqamlar bilan","5-slayd: CTA — 'Siz ham shunday natija xohlaysizmi?'"],
-    caption:"Caption: [Natija raqami] + [qisqa jarayon] + savol bilan yakunlang" },
-  { tag:'ISHONCH', title:"Sahna orqasi (behind the scenes)",
-    desc:"Auditoriya bilan ishonch o'rnatish uchun jarayonni ko'rsatish — 'shaxsiy brend' effektini kuchaytiradi.",
-    steps:["Kunlik jarayonning bir bo'lagini suratga oling","Qiyinchilik yoki xato haqida ochiq gapiring","Undan qanday saboq olganingizni ayting","Auditoriyani shu mavzuda tajribasini so'rang"],
-    caption:"Caption: shaxsiy hikoya ohangida, 'men ham...' bilan boshlang" },
-  { tag:'STORY', title:"Savol-javob va so'rovnoma",
-    desc:"Story engagement (reach) ni oshirish uchun eng samarali interaktiv format.",
-    steps:["Poll: ikkita variant bilan oddiy savol qo'ying","Natijani keyingi story'da e'lon qiling","Savol quti orqali auditoriya so'rovlarini yig'ing","3-5 ta savolga alohida video javob bering"],
-    caption:"CTA: 'Javobingizni bosing, natijani ertaga ko'rsataman'" },
-  { tag:'KEYS', title:"Case study post",
-    desc:"Xizmat yoki mahsulotning real natijasini ko'rsatib, ishonch va sotuvni oshiradi.",
-    steps:["Mijoz/holat qisqacha tanishtiriladi","Boshlang'ich muammo raqamlar bilan","Qo'llangan yechim bosqichma-bosqich","Yakuniy natija — aniq foiz yoki raqam bilan"],
-    caption:"Caption: 'Qanday qilib [X] ni [Y] ga o'zgartirdik' formulasi" },
-  { tag:'RO\'YXAT', title:"Top-5 / Top-3 ro'yxat post",
-    desc:"Foydali, saqlanadigan (save) kontent — algoritm save va ulashishlarni yuqori baholaydi.",
-    steps:["Sarlavha: 'Top-5 [mavzu]'","Har bir band uchun 1 ta karusel slayd","Har bandga 1 qisqa amaliy maslahat qo'shing","Oxirgi slaydda umumlashtiruvchi jamlab beruvchi rasm"],
-    caption:"Caption: 'Qaysi birini sinab ko'rgansiz? Izohda yozing 👇'" }
+/* ================= HASHTAG DATA =================
+   Yangi to'plam qo'shish uchun quyidagi ro'yxatga
+   { id, cat, title, uses, tags:[...] } shaklida qator qo'shing.
+====================================================*/
+const hashtagSets = [
+  {id:'h1', cat:'Umumiy', title:"Umumiy top heshteglar", uses:1840, tags:['#instagood','#instadaily','#photooftheday','#uzbekistan','#tashkent','#reels','#explore','#viral','#trend','#topsxema','#follow4follow','#like4like','#instamood','#picoftheday','#bestoftheday']},
+  {id:'h2', cat:'Sevgi', title:"Sevgi va munosabatlar", uses:1210, tags:['#sevgi','#muhabbat','#love','#couplegoals','#romantik','#his','#yurak','#birga','#sevgilim','#baxt','#oila','#unashtiruv','#nikoh','#seni_sevaman']},
+  {id:'h3', cat:'Sayohat', title:"Sayohat va safar", uses:990, tags:['#sayohat','#travel','#dunyo','#samarqand','#buxoro','#adventure','#travelblogger','#wanderlust','#safar','#dam_olish','#tabiat','#dengiz','#togʻlar','#yolvoyage']},
+  {id:'h4', cat:'Ovqat', title:"Milliy taomlar", uses:860, tags:['#ovqat','#taom','#osh','#food','#foodie','#uzbekfood','#restoran','#ovqatlanish','#milliy_taom','#nonushta','#shirinlik','#kafe','#taomnoma']},
+  {id:'h5', cat:'Moda', title:"Moda va uslub", uses:1420, tags:['#moda','#fashion','#style','#uslub','#kiyim','#trendkiyim','#ootd','#glamur','#beauty','#zamonaviy','#aksessuar','#poyabzal','#shopping']},
+  {id:'h6', cat:'Motivatsiya', title:"Motivatsiya va rivojlanish", uses:1075, tags:['#motivatsiya','#maqsad','#muvaffaqiyat','#rivojlanish','#gʻoya','#biznes','#pul','#tirishqoqlik','#natija','#kelajak','#o‘zgarish','#ilhom','#kuch']},
+  {id:'h7', cat:'Biznes', title:"Biznes va marketing", uses:735, tags:['#biznes','#marketing','#reklama','#tadbirkor','#startap','#brend','#sotuv','#smm','#instabiznes','#buyurtma','#onlaynsavdo','#foyda']},
+  {id:'h8', cat:'Bayram', title:"Bayram va tabrik", uses:602, tags:['#bayram','#tabrik','#yangiyil','#navroz','#tugilgankun','#tuy','#sovga','#quvonch','#tabriklaymiz','#bayram_kayfiyati']},
+  {id:'h9', cat:'Sport', title:"Sport va faollik", uses:815, tags:['#sport','#fitnes','#trenirovka','#sogʻlom_turmush','#gym','#futbol','#basketbol','#yugurish','#kuch_mashqlari','#sportchi','#motivatsiya_sport']},
+  {id:'h10', cat:'Texnologiya', title:"Texnologiya va IT", uses:690, tags:['#texnologiya','#it','#dasturlash','#gadjet','#smartfon','#innovatsiya','#dasturchi','#raqamli','#startapuzbek','#texnika']},
+  {id:'h11', cat:"Ta'lim", title:"Ta'lim va bilim", uses:540, tags:['#talim','#bilim','#talaba','#universitet','#kitob','#oquv','#malaka','#chet_tili','#online_talim','#stipendiya']},
+  {id:'h12', cat:"Go'zallik", title:"Go'zallik va parvarish", uses:980, tags:['#gozallik','#beauty','#makiyaj','#teri_parvarishi','#soch','#kosmetika','#salon','#manikyur','#parvarish','#nazokat']},
+  {id:'h13', cat:'Bolalar', title:"Bolalar va oila", uses:470, tags:['#bolalar','#oila','#chaqaloq','#onalik','#otalik','#bolalar_dunyosi','#bogcha','#ozgina_baxt','#bolajon']},
+  {id:'h14', cat:'Uy-ro\'zg\'or', title:"Uy va ro'zg'or", uses:410, tags:['#uy','#royg\'or','#interyer','#dizayn','#tozalik','#uy_jihozlari','#remont','#bogʻdorchilik','#uy_rasmi']},
 ];
 
-const schemeList = document.getElementById('schemeList');
-SCHEMES.forEach(s=>{
-  const card = document.createElement('div');
-  card.className = 'scheme-card';
-  card.innerHTML = `
-    <div class="scheme-top">
-      <h3>${s.title}</h3>
-      <div class="scheme-tag">${s.tag}</div>
-    </div>
-    <div class="scheme-desc">${s.desc}</div>
-    <ul class="scheme-steps">${s.steps.map(st=>`<li>${st}</li>`).join('')}</ul>
-    <div class="caption-box">${s.caption}</div>
-  `;
-  schemeList.appendChild(card);
-});
-
-/* ---------------- Ma'lumotlar: postlash vaqti ---------------- */
-const SCHEDULE = [
-  { day:"Dushanba", slots:["12:00–13:00","19:00–20:30"] },
-  { day:"Seshanba", slots:["11:30–13:00","19:30–21:00"] },
-  { day:"Chorshanba", slots:["12:00–13:30","20:00–21:30"] },
-  { day:"Payshanba", slots:["12:00–13:00","19:00–20:30"] },
-  { day:"Juma", slots:["11:00–12:30","18:30–20:00"] },
-  { day:"Shanba", slots:["11:00–13:00","20:00–22:00"] },
-  { day:"Yakshanba", slots:["11:00–13:00","19:00–21:30"] }
+/* ================= STATIC BACKGROUND DATA =================
+   Tayyor gradient fonlar. Foydalanuvchi o'z rasmlarini esa
+   ilova ichidan "+" tugmasi orqali qo'shadi (pastda saqlanadi).
+================================================================*/
+const bgCategories = ['Instagram','Minimalist','Neon tun','Tabiat','Bayram','Biznes'];
+const staticBackgrounds = [
+  {id:'b1', cat:'Instagram', title:'IG klassik', type:'gradient', stops:['#F58529','#DD2A7B','#8134AF'], angle:135, uses:2210},
+  {id:'b2', cat:'Instagram', title:'Quyosh botishi', type:'gradient', stops:['#FEDA75','#FA7E1E','#D62976'], angle:120, uses:1870},
+  {id:'b3', cat:'Instagram', title:'Binafsha oqim', type:'gradient', stops:['#833AB4','#C13584','#E1306C'], angle:145, uses:1640},
+  {id:'b4', cat:'Instagram', title:'Feed gradient', type:'gradient', stops:['#4F5BD5','#962FBF','#D62976','#FA7E1E'], angle:110, uses:1590},
+  {id:'b5', cat:'Minimalist', title:'Oq tuman', type:'gradient', stops:['#F4F4F6','#DCDCE4'], angle:135, uses:920},
+  {id:'b6', cat:'Minimalist', title:'Kul rang sokin', type:'gradient', stops:['#232526','#414345'], angle:135, uses:880},
+  {id:'b7', cat:'Minimalist', title:'Krem latte', type:'gradient', stops:['#F5EBDD','#D8C3A5'], angle:120, uses:760},
+  {id:'b8', cat:'Minimalist', title:'Toza qora', type:'gradient', stops:['#0F0F12','#26262E'], angle:135, uses:705},
+  {id:'b9', cat:'Neon tun', title:'Kibernuqta', type:'gradient', stops:['#00F5A0','#00D9F5'], angle:120, uses:1330},
+  {id:'b10', cat:'Neon tun', title:'Elektr binafsha', type:'gradient', stops:['#7F00FF','#E100FF'], angle:135, uses:1275},
+  {id:'b11', cat:'Neon tun', title:'Qizil neon', type:'gradient', stops:['#FF0844','#FFB199'], angle:130, uses:990},
+  {id:'b12', cat:'Neon tun', title:"Sintez to'lqin", type:'gradient', stops:['#0F2027','#2C5364','#00F5A0'], angle:145, uses:845},
+  {id:'b13', cat:'Tabiat', title:"Yashil o'rmon", type:'gradient', stops:['#134E5E','#71B280'], angle:135, uses:710},
+  {id:'b14', cat:'Tabiat', title:'Osmon havo', type:'gradient', stops:['#2980B9','#6DD5FA','#FFFFFF'], angle:120, uses:665},
+  {id:'b15', cat:'Tabiat', title:"Cho'l qumi", type:'gradient', stops:['#DFA97A','#B0703E'], angle:135, uses:520},
+  {id:'b16', cat:'Bayram', title:'Yangi yil', type:'gradient', stops:['#0F2027','#C31432','#240B36'], angle:135, uses:1120},
+  {id:'b17', cat:'Bayram', title:'Bayram oltin', type:'gradient', stops:['#BF953F','#FCF6BA','#B38728'], angle:120, uses:980},
+  {id:'b18', cat:'Bayram', title:"Navro'z yashil", type:'gradient', stops:['#56AB2F','#A8E063'], angle:135, uses:640},
+  {id:'b19', cat:'Biznes', title:"Korporativ ko'k", type:'gradient', stops:['#1A2980','#26D0CE'], angle:135, uses:790},
+  {id:'b20', cat:'Biznes', title:'Grafit', type:'gradient', stops:['#3E5151','#DECBA4'], angle:130, uses:560},
 ];
-const timeList = document.getElementById('timeList');
-SCHEDULE.forEach(d=>{
-  const el = document.createElement('div');
-  el.className = 'day-card';
-  el.innerHTML = `<div class="day-name">${d.day}</div><div class="day-slots">${d.slots.map(s=>`<div class="slot">${s}</div>`).join('')}</div>`;
-  timeList.appendChild(el);
-});
 
-/* ---------------- Tab boshqaruvi ---------------- */
-function setTab(tab){
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.tab===tab));
-  document.querySelectorAll('.bb-item').forEach(b=>b.classList.toggle('active', b.dataset.tab===tab));
-  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active', p.id==='panel-'+tab));
+/* ================= REFERRAL CONFIG =================
+   BOT_USERNAME'ni o'z botingiz username'iga moslang (@ belgisisiz).
+   Havola formati: https://t.me/BOT_USERNAME?start=ref_<foydalanuvchi_id>
+   Diqqat: bu yerda faqat havola yaratiladi va ulashiladi. Do'stingiz
+   shu havola orqali /start bosganda, botingiz backend qismida
+   "ref_<id>" payload'ni o'qib, taklif qilgan va qilingan foydalanuvchini
+   bog'lash kerak — buni BotFather emas, botning o'z kodi (masalan,
+   Python/Node backend) amalga oshiradi.
+========================================================*/
+const BOT_USERNAME = 'InstagramTopSxemaabot';
+
+/* ================= STATE ================= */
+let currentTab = 'hashtags';
+let hashFilterCat = 'Barchasi';
+let bgFilterCat = 'Barchasi';
+let searchTerm = '';
+
+const FAV_KEY = 'topsxema_favs_v1';
+const USERBG_KEY = 'topsxema_userbgs_v1';
+function loadFavs(){ try{ return JSON.parse(localStorage.getItem(FAV_KEY)) || {h:[], b:[]}; } catch(e){ return {h:[], b:[]}; } }
+function saveFavs(f){ localStorage.setItem(FAV_KEY, JSON.stringify(f)); }
+let favs = loadFavs();
+
+function loadUserBgs(){ try{ return JSON.parse(localStorage.getItem(USERBG_KEY)) || []; } catch(e){ return []; } }
+function saveUserBgs(a){ localStorage.setItem(USERBG_KEY, JSON.stringify(a)); }
+let userBgs = loadUserBgs();
+
+function getAllBackgrounds(){ return staticBackgrounds.concat(userBgs); }
+function getAllBgCategories(){
+  const cats = new Set(bgCategories);
+  userBgs.forEach(b=> cats.add(b.cat));
+  return [...cats];
 }
-document.querySelectorAll('.tab-btn, .bb-item').forEach(btn=>{
-  btn.addEventListener('click', ()=>{ haptic('light'); setTab(btn.dataset.tab); });
-});
 
-/* ---------------- Toast ---------------- */
-let toastTimer;
-function showToast(msg){
+/* ================= TELEGRAM INIT ================= */
+try{
+  const tg = window.Telegram?.WebApp;
+  if(tg){ tg.ready(); tg.expand(); tg.setHeaderColor && tg.setHeaderColor('#0B0B10'); }
+}catch(e){}
+
+/* ================= HELPERS ================= */
+function gradCss(bg){ return `linear-gradient(${bg.angle}deg, ${bg.stops.join(',')})`; }
+function bgStyle(bg){ return bg.type==='image' ? `background-image:url('${bg.image}')` : `background:${gradCss(bg)}`; }
+function showToast(text){
   const t = document.getElementById('toast');
-  t.textContent = msg;
+  document.getElementById('toastText').textContent = text;
   t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(()=>t.classList.remove('show'), 1400);
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(()=>t.classList.remove('show'), 1800);
+}
+function copyText(text){
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(()=>showToast('Nusxalandi ✓')).catch(()=>fallbackCopy(text));
+  } else fallbackCopy(text);
+}
+function fallbackCopy(text){
+  const ta = document.createElement('textarea');
+  ta.value = text; document.body.appendChild(ta); ta.select();
+  try{ document.execCommand('copy'); showToast('Nusxalandi ✓'); }catch(e){ showToast('Xato yuz berdi'); }
+  document.body.removeChild(ta);
+}
+function downloadBg(bg){
+  if(bg.type==='image'){
+    const a = document.createElement('a');
+    a.href = bg.image; a.download = `fon-${bg.title.replace(/\s+/g,'_')}.png`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    showToast('Yuklandi ✓');
+    return;
+  }
+  const canvas = document.createElement('canvas');
+  canvas.width = 1080; canvas.height = 1920;
+  const ctx = canvas.getContext('2d');
+  const rad = bg.angle * Math.PI/180;
+  const x = Math.cos(rad), y = Math.sin(rad);
+  const g = ctx.createLinearGradient(1080/2 - x*1080/2, 1920/2 - y*1920/2, 1080/2 + x*1080/2, 1920/2 + y*1920/2);
+  bg.stops.forEach((c,i)=> g.addColorStop(i/(bg.stops.length-1||1), c));
+  ctx.fillStyle = g; ctx.fillRect(0,0,1080,1920);
+  canvas.toBlob(blob=>{
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `fon-${bg.title.replace(/\s+/g,'_')}.png`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('Yuklandi ✓');
+  }, 'image/png');
+}
+function dayOfYearSeed(){
+  const d = new Date();
+  return d.getFullYear()*400 + d.getMonth()*31 + d.getDate();
+}
+/* Kunlik "ishlatilgan soni" statistikasini simulyatsiya qilish uchun
+   soat/kalendar asosidagi seed'langan pseudo-random funksiya. */
+function seededRandom(seed){
+  let x = Math.sin(seed) * 10000;
+  return x - Math.floor(x);
+}
+function dailyUses(baseUses, idSeed){
+  const seed = dayOfYearSeed() + idSeed;
+  const variance = 0.55 + seededRandom(seed)*0.85;
+  return Math.max(1, Math.round((baseUses/12) * variance));
+}
+function idSeedFromString(str){
+  let h = 0;
+  for(let i=0;i<str.length;i++){ h = (h*31 + str.charCodeAt(i)) % 100000; }
+  return h;
 }
 
-/* ---------------- Ishga tushirish ---------------- */
-renderDial();
-renderTags();
+/* ================= RENDER: HASHTAGS ================= */
+function renderHashCats(){
+  const cats = ['Barchasi', ...new Set(hashtagSets.map(h=>h.cat))];
+  const row = document.getElementById('hashCatRow');
+  row.innerHTML = cats.map(c=>`<div class="chip ${c===hashFilterCat?'active':''}" data-cat="${c}">${c}</div>`).join('');
+  row.querySelectorAll('.chip').forEach(chip=>{
+    chip.onclick = ()=>{ hashFilterCat = chip.dataset.cat; renderHashCats(); renderHashList(); };
+  });
+}
+function hashCard(h, favBtnActive){
+  return `
+  <div class="h-card" data-id="${h.id}">
+    <div class="h-card-top">
+      <div>
+        <h3>${h.title}</h3>
+        <div class="cat-tag">${h.cat} · ${h.tags.length} ta heshteg</div>
+      </div>
+      <div class="icon-btn fav ${favBtnActive?'active':''}" onclick="toggleFav('h','${h.id}')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8E8E99" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+      </div>
+    </div>
+    <div class="tags-wrap">${h.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+    <div class="row-btns">
+      <button class="btn btn-primary" onclick='copyText(${JSON.stringify(h.tags.join(" "))})'>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        Nusxalash
+      </button>
+    </div>
+  </div>`;
+}
+function renderHashList(){
+  const list = document.getElementById('hashList');
+  let items = hashtagSets.filter(h=> hashFilterCat==='Barchasi' || h.cat===hashFilterCat);
+  if(searchTerm) items = items.filter(h=> h.title.toLowerCase().includes(searchTerm) || h.tags.join(' ').toLowerCase().includes(searchTerm));
+  if(items.length===0){ list.innerHTML = emptyStateHtml('Hech narsa topilmadi'); return; }
+  list.innerHTML = items.map(h=> hashCard(h, favs.h.includes(h.id))).join('');
+}
+
+/* ================= RENDER: BACKGROUNDS ================= */
+function renderBgCats(){
+  const cats = ['Barchasi', ...getAllBgCategories()];
+  const row = document.getElementById('bgCatRow');
+  row.innerHTML = cats.map(c=>`<div class="chip ${c===bgFilterCat?'active':''}" data-cat="${c}">${c}</div>`).join('');
+  row.querySelectorAll('.chip').forEach(chip=>{
+    chip.onclick = ()=>{ bgFilterCat = chip.dataset.cat; renderBgCats(); renderBgList(); };
+  });
+}
+function bgCard(b, favActive){
+  const delBtn = b.type==='image' ? `<div class="bg-del-btn" onclick="deleteUserBg('${b.id}')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path></svg>
+    </div>` : '';
+  const mineBadge = b.type==='image' ? `<div class="mine-badge">MENING RASMIM</div>` : '';
+  return `
+  <div class="bg-card" data-id="${b.id}">
+    <div class="bg-swatch" style="${bgStyle(b)}">
+      ${delBtn}
+      ${mineBadge}
+      <div class="bg-fav-btn ${favActive?'active':''}" onclick="toggleFav('b','${b.id}')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+      </div>
+    </div>
+    <div class="bg-info">
+      <h4>${b.title}</h4>
+      <p>${b.cat}</p>
+      <button class="bg-dl" onclick='downloadBg(${JSON.stringify(b).replace(/'/g,"&#39;")})'>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#F5F5F7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        Yuklab olish
+      </button>
+    </div>
+  </div>`;
+}
+function renderBgList(){
+  const list = document.getElementById('bgList');
+  let items = getAllBackgrounds().filter(b=> bgFilterCat==='Barchasi' || b.cat===bgFilterCat);
+  if(searchTerm) items = items.filter(b=> b.title.toLowerCase().includes(searchTerm) || b.cat.toLowerCase().includes(searchTerm));
+  const addCard = `<div class="add-card" onclick="openUploadModal()">
+      <div class="plus-ring">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+      </div>
+      <span>O'z rasmingizni qo'shing</span>
+    </div>`;
+  list.innerHTML = addCard + items.map(b=> bgCard(b, favs.b.includes(b.id))).join('');
+}
+function deleteUserBg(id){
+  userBgs = userBgs.filter(b=> b.id!==id);
+  saveUserBgs(userBgs);
+  favs.b = favs.b.filter(fid=> fid!==id);
+  saveFavs(favs);
+  showToast("Rasm o'chirildi");
+  renderAll();
+}
+
+/* ================= UPLOAD MODAL ================= */
+let pendingImageData = null;
+function openUploadModal(){
+  document.getElementById('uploadModal').classList.add('show');
+  document.getElementById('imgTitleInput').value = '';
+  document.getElementById('uploadZoneText').textContent = 'Rasm tanlash uchun bosing';
+  document.getElementById('fileInput').value = '';
+  pendingImageData = null;
+  const sel = document.getElementById('imgCatSelect');
+  sel.innerHTML = getAllBgCategories().map(c=>`<option value="${c}">${c}</option>`).join('') + `<option value="__new__">+ Yangi kategoriya</option>`;
+  document.getElementById('newCatField').style.display = 'none';
+  document.getElementById('newCatInput').value = '';
+}
+function closeUploadModal(){ document.getElementById('uploadModal').classList.remove('show'); }
+document.getElementById('cancelUpload').onclick = closeUploadModal;
+document.getElementById('uploadModal').addEventListener('click', (e)=>{ if(e.target.id==='uploadModal') closeUploadModal(); });
+document.getElementById('imgCatSelect').addEventListener('change', (e)=>{
+  document.getElementById('newCatField').style.display = e.target.value==='__new__' ? 'block' : 'none';
+});
+document.getElementById('fileInput').addEventListener('change', (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev)=>{
+    pendingImageData = ev.target.result;
+    document.getElementById('uploadZoneText').textContent = "Rasm tanlandi — o'zgartirish uchun qayta bosing";
+    const zone = document.getElementById('uploadZone');
+    let img = zone.querySelector('img');
+    if(!img){ img = document.createElement('img'); zone.prepend(img); }
+    img.src = pendingImageData;
+  };
+  reader.readAsDataURL(file);
+});
+document.getElementById('confirmUpload').onclick = ()=>{
+  if(!pendingImageData){ showToast('Avval rasm tanlang'); return; }
+  const titleInput = document.getElementById('imgTitleInput').value.trim();
+  let cat = document.getElementById('imgCatSelect').value;
+  if(cat==='__new__'){
+    const newCat = document.getElementById('newCatInput').value.trim();
+    if(!newCat){ showToast('Kategoriya nomini kiriting'); return; }
+    cat = newCat;
+  }
+  const newBg = {
+    id: 'u' + Date.now(),
+    cat: cat,
+    title: titleInput || 'Mening fonim',
+    type: 'image',
+    image: pendingImageData,
+    uses: Math.floor(Math.random()*40)+5,
+  };
+  userBgs.push(newBg);
+  saveUserBgs(userBgs);
+  closeUploadModal();
+  showToast("Rasm qo'shildi ✓");
+  bgFilterCat = 'Barchasi';
+  renderAll();
+  switchTab('backgrounds');
+};
+
+/* ================= RENDER: REFERRAL ================= */
+const REF_LOG_KEY = 'topsxema_reflog_v1';
+function loadRefLog(){ try{ return JSON.parse(localStorage.getItem(REF_LOG_KEY)) || []; } catch(e){ return []; } }
+function saveRefLog(a){ localStorage.setItem(REF_LOG_KEY, JSON.stringify(a)); }
+let refLog = loadRefLog();
+
+function getTgUserId(){
+  try{
+    const u = window.Telegram?.WebApp?.initDataUnsafe?.user;
+    if(u && u.id) return String(u.id);
+  }catch(e){}
+  // Mehmon rejimida (Telegram tashqarisida ochilganda) vaqtinchalik ID yaratiladi
+  let guest = localStorage.getItem('topsxema_guest_id');
+  if(!guest){ guest = 'guest' + Math.floor(Math.random()*900000+100000); localStorage.setItem('topsxema_guest_id', guest); }
+  return guest;
+}
+function getRefLink(){
+  return `https://t.me/${BOT_USERNAME}?start=ref_${getTgUserId()}`;
+}
+function renderReferral(){
+  document.getElementById('refLinkText').textContent = getRefLink();
+  document.getElementById('refShareCount').textContent = refLog.length;
+  const logEl = document.getElementById('refLog');
+  if(refLog.length===0){
+    logEl.innerHTML = emptyStateHtml("Hali ulashishlar yo'q. Havolangizni do'stlaringiz bilan baham ko'ring.");
+    return;
+  }
+  logEl.innerHTML = `<div class="h-card">` + refLog.slice().reverse().slice(0,15).map(item=>`
+    <div class="share-log-item">
+      <div class="share-log-icon">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8E8E99" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+      </div>
+      <div style="flex:1;"><p>Havola ulashildi</p><span>${item.date}</span></div>
+    </div>`).join('') + `</div>`;
+}
+function copyRefLink(){ copyText(getRefLink()); }
+function shareRefLink(){
+  const link = getRefLink();
+  const text = "Instagram uchun tayyor heshteglar va fonlar — Top sxema | Heshteg botidan foydalaning!";
+  try{
+    const tg = window.Telegram?.WebApp;
+    if(tg && tg.openTelegramLink){
+      tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(text)}`);
+    } else {
+      window.open(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(text)}`, '_blank');
+    }
+  }catch(e){
+    window.open(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(text)}`, '_blank');
+  }
+  refLog.push({date: new Date().toLocaleDateString('uz-UZ', {day:'2-digit', month:'2-digit', year:'numeric'}) + ' ' + new Date().toLocaleTimeString('uz-UZ',{hour:'2-digit',minute:'2-digit'})});
+  saveRefLog(refLog);
+  renderReferral();
+}
+
+/* ================= RENDER: FAVORITES ================= */
+function renderFavorites(){
+  const el = document.getElementById('favContent');
+  const favHash = hashtagSets.filter(h=> favs.h.includes(h.id));
+  const favBg = getAllBackgrounds().filter(b=> favs.b.includes(b.id));
+  if(favHash.length===0 && favBg.length===0){
+    el.innerHTML = emptyStateHtml("Hali sevimlilar yo'q. Yurak belgisini bosib qo'shing.", true);
+    return;
+  }
+  let html = '';
+  if(favHash.length){ html += `<div class="fav-group-title">Heshteg to'plamlari</div>` + favHash.map(h=> hashCard(h, true)).join(''); }
+  if(favBg.length){ html += `<div class="fav-group-title">Fonlar</div><div class="bg-grid">${favBg.map(b=> bgCard(b, true)).join('')}</div>`; }
+  el.innerHTML = html;
+}
+function toggleFav(type, id){
+  const arr = type==='h' ? favs.h : favs.b;
+  const idx = arr.indexOf(id);
+  if(idx===-1){ arr.push(id); showToast("Sevimlilarga qo'shildi ★"); }
+  else { arr.splice(idx,1); showToast('Sevimlilardan olib tashlandi'); }
+  saveFavs(favs);
+  renderAll();
+}
+
+/* ================= RENDER: TOP (kunlik top-10, ajratilgan) ================= */
+function renderTop(){
+  const hTop = hashtagSets
+    .map(h=> ({...h, today: dailyUses(h.uses, idSeedFromString(h.id))}))
+    .sort((a,b)=> b.today - a.today)
+    .slice(0,10);
+
+  const bTop = getAllBackgrounds()
+    .map(b=> ({...b, today: dailyUses(b.uses, idSeedFromString(b.id))}))
+    .sort((a,b)=> b.today - a.today)
+    .slice(0,10);
+
+  function rowHtml(item, i, isBg){
+    const rankClass = i===0?'gold':i===1?'silver':i===2?'bronze':'';
+    const swatch = isBg
+      ? `<div class="top-swatch" style="${bgStyle(item)}"></div>`
+      : `<div class="top-swatch" style="background:var(--surface-2); display:flex; align-items:center; justify-content:center;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8E8E99" stroke-width="2" stroke-linecap="round"><line x1="4" y1="9" x2="20" y2="9"></line><line x1="4" y1="15" x2="20" y2="15"></line><line x1="10" y1="3" x2="8" y2="21"></line><line x1="16" y1="3" x2="14" y2="21"></line></svg>
+         </div>`;
+    return `<div class="top-row" onclick="goToItem('${isBg?'b':'h'}','${item.id}')">
+      <div class="rank ${rankClass}">${i+1}</div>
+      ${swatch}
+      <div class="top-mid"><h4>${item.title}</h4><p>${item.cat}</p></div>
+      <div class="top-count">${item.today}<small>bugun</small></div>
+    </div>`;
+  }
+
+  const html = `
+    <div class="top-sub-title">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#DD2A7B" stroke-width="2" stroke-linecap="round"><line x1="4" y1="9" x2="20" y2="9"></line><line x1="4" y1="15" x2="20" y2="15"></line><line x1="10" y1="3" x2="8" y2="21"></line><line x1="16" y1="3" x2="14" y2="21"></line></svg>
+      Bugungi top 10 heshteg
+    </div>
+    ${hTop.map((item,i)=> rowHtml(item,i,false)).join('')}
+    <div class="top-sub-title">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F58529" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+      Bugungi top 10 fon
+    </div>
+    ${bTop.map((item,i)=> rowHtml(item,i,true)).join('')}
+  `;
+  document.getElementById('topList').innerHTML = html;
+}
+function goToItem(type, id){
+  if(type==='h'){ switchTab('hashtags'); hashFilterCat='Barchasi'; renderHashCats(); renderHashList(); }
+  else { switchTab('backgrounds'); bgFilterCat='Barchasi'; renderBgCats(); renderBgList(); }
+}
+
+function emptyStateHtml(msg, heart){
+  const icon = heart
+    ? `<svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="#8E8E99" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>`
+    : `<svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="#8E8E99" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>`;
+  return `<div class="empty-state">${icon}<p>${msg}</p></div>`;
+}
+
+/* ================= TAB SWITCH ================= */
+function switchTab(tab){
+  currentTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b=> b.classList.toggle('active', b.dataset.tab===tab));
+  document.querySelectorAll('.view').forEach(v=> v.classList.toggle('active', v.id===`view-${tab}`));
+  document.getElementById('searchWrap').style.display = (tab==='hashtags' || tab==='backgrounds') ? 'flex' : 'none';
+  const subs = {
+    hashtags: "Kerakli heshtegni tanlang va nusxalang",
+    backgrounds: "Tanlang, yuklab oling yoki o'zingiznikini qo'shing",
+    referral: "Do'stlaringizni taklif qiling va komissiya oling",
+    favorites: "Saqlangan sevimlilaringiz",
+    top: "Bugun eng ko'p ishlatilganlar"
+  };
+  document.getElementById('headerSub').textContent = subs[tab];
+}
+document.querySelectorAll('.tab-btn').forEach(btn=> btn.addEventListener('click', ()=> switchTab(btn.dataset.tab)));
+document.getElementById('searchInput').addEventListener('input', (e)=>{
+  searchTerm = e.target.value.trim().toLowerCase();
+  if(currentTab==='hashtags') renderHashList();
+  if(currentTab==='backgrounds') renderBgList();
+});
+
+/* ================= INIT ================= */
+function renderAll(){
+  renderHashCats(); renderHashList();
+  renderBgCats(); renderBgList();
+  renderReferral();
+  renderFavorites();
+  renderTop();
+}
+renderAll();
+switchTab('hashtags');
 </script>
 </body>
 </html>
